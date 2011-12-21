@@ -117,6 +117,7 @@ class WaterJug:
 
 if __name__=="__main__":
     fileptr=open("WaterJug.in",'r')
+    outptr=open("WaterJug.out",'w')
     N=int(fileptr.readline())
     for i in range(0,N):
         store=WaterJug(fileptr)
@@ -124,3 +125,4 @@ if __name__=="__main__":
         print "Sorted Breadth first:",store.mem
     #print "all Successfull Paths:"
         store.findSuccessfullPaths([store.startState])
+        outptr.write("Case "+str(i)+":"+str(store.bestPath)+'\n')
