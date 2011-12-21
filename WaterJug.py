@@ -10,22 +10,19 @@ class WaterJug:
         self.states=[]
         self.aim=[]
         self.connecter=' '
-        #self.vol=' '.split(fileptr.readline()[:-1])
         volstr=fileptr.readline()[:-1]
+        
         for i in volstr:
-            #print  volstr,self.vol,i
             if(i!=" "):
                 self.vol.append(int(i))
                 self.states.append(0)
             
-        #fileptr.seek(-2)    
         self.aim=fileptr.readline()[:-1]
-        print  self.aim,self.vol
+       
         self.startState=self.joinStates(self.states,self.connecter)
-        
         self.mem={self.startState:[]}
-        
         self.bestPath=[]
+        self.compleetSearch()
         
     def findSuccessfullPaths(self,path):
         #print path
@@ -39,16 +36,13 @@ class WaterJug:
                     self.findSuccessfullPaths(path)
                     path.pop()
 
-    def performOperation(self,condition,do):
-        if condition:
-            stat=self.states[:]
-            do()
-            self.mem[cur_stat].append(self.joinStates(stat,self.connecter))
-            statstr=self.joinStates(stat,self.connecter)
-            if statstr not in self.mem[cur_stat]:
-                self.mem[cur_stat].append(statstr)
-            if statstr not in self.mem:
-                self.mem[statstr]=[]
+    def performOperation(self,cur_stat,stat):
+        self.mem[cur_stat].append(self.joinStates(stat,self.connecter))
+        statstr=self.joinStates(stat,self.connecter)
+        if statstr not in self.mem[cur_stat]:
+            self.mem[cur_stat].append(statstr)
+        if statstr not in self.mem:
+            self.mem[statstr]=[]
 
     def compleetSearch(self):
         cur_stat=self.joinStates(self.states,self.connecter)
@@ -57,23 +51,12 @@ class WaterJug:
             if self.states[i]==0:
                 stat=self.states[:]
                 stat[i]=self.vol[i]
-                self.mem[cur_stat].append(self.joinStates(stat,self.connecter))
-                statstr=self.joinStates(stat,self.connecter)
-                if statstr not in self.mem[cur_stat]:
-                    self.mem[cur_stat].append(statstr)
-                if statstr not in self.mem:
-                    self.mem[statstr]=[]
+                self.performOperation(cur_stat,stat)
     
             elif self.states[i]==self.vol[i]:
                stat=self.states[:]
                stat[i]=0
-               #print stat
-               self.mem[cur_stat].append(self.joinStates(stat,self.connecter))
-               statstr=self.joinStates(stat,self.connecter)
-               if statstr not in self.mem[cur_stat]:
-                   self.mem[cur_stat].append(statstr)
-               if statstr not in self.mem:
-                    self.mem[statstr]=[]
+               self.performOperation(cur_stat,stat)
 
             for j in range(0,self.num):
                 if self.states[i]!=0 and i!=j and self.states[j]<self.vol[j]:
@@ -86,14 +69,7 @@ class WaterJug:
                         stat[j]+=stat[i]
                         stat[i]=0
                         
-                    #print stat
-                    statstr=self.joinStates(stat,self.connecter)
-                    if statstr not in self.mem[cur_stat]:
-                        self.mem[cur_stat].append(statstr)
-                    if statstr not in self.mem:
-                        self.mem[statstr]=[]
-
-        #print self.mem
+                    self.performOperation(cur_stat,stat)
 
         for elment in self.mem[cur_stat]:
             if self.mem[elment]==[]:
