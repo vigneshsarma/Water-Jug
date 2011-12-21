@@ -4,13 +4,27 @@ Universal Solution To WaterJug Problem.
 
 class WaterJug:
 
-    def __init__(self,file):
-        self.num=3;
-        self.aim=''
-        self.vol=[];
+    def __init__(self,fileptr):
+        self.num=int(fileptr.readline())
+        self.vol=[]
         self.states=[]
-        self.mem={self.joinStates(self.states,self.connecter):[]}
+        self.aim=[]
         self.connecter=' '
+        #self.vol=' '.split(fileptr.readline()[:-1])
+        volstr=fileptr.readline()[:-1]
+        for i in volstr:
+            #print  volstr,self.vol,i
+            if(i!=" "):
+                self.vol.append(int(i))
+                self.states.append(0)
+            
+        #fileptr.seek(-2)    
+        self.aim=fileptr.readline()[:-1]
+        print  self.aim,self.vol
+        self.startState=self.joinStates(self.states,self.connecter)
+        
+        self.mem={self.startState:[]}
+        
         self.bestPath=[]
         
     def findSuccessfullPaths(self,path):
@@ -27,15 +41,22 @@ class WaterJug:
 
     def performOperation(self,condition,do):
         if condition:
-            stat=
+            stat=self.states[:]
+            do()
+            self.mem[cur_stat].append(self.joinStates(stat,self.connecter))
+            statstr=self.joinStates(stat,self.connecter)
+            if statstr not in self.mem[cur_stat]:
+                self.mem[cur_stat].append(statstr)
+            if statstr not in self.mem:
+                self.mem[statstr]=[]
 
     def compleetSearch(self):
         cur_stat=self.joinStates(self.states,self.connecter)
         for i in range(0,self.num):
+            #print i
             if self.states[i]==0:
                 stat=self.states[:]
                 stat[i]=self.vol[i]
-                #print stat
                 self.mem[cur_stat].append(self.joinStates(stat,self.connecter))
                 statstr=self.joinStates(stat,self.connecter)
                 if statstr not in self.mem[cur_stat]:
@@ -95,9 +116,11 @@ class WaterJug:
 
 
 if __name__=="__main__":
-   
-    store=WaterJug()
-    store.compleetSearch()
-    print "Sorted Breadth first:",store.mem
-    print "all Successfull Paths:"
-    store.findSuccessfullPaths(['0 0 0'])
+    fileptr=open("WaterJug.in",'r')
+    N=int(fileptr.readline())
+    for i in range(0,N):
+        store=WaterJug(fileptr)
+        store.compleetSearch()
+        print "Sorted Breadth first:",store.mem
+    #print "all Successfull Paths:"
+        store.findSuccessfullPaths([store.startState])
