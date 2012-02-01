@@ -92,8 +92,8 @@ class WaterJug:
 
 
 if __name__=="__main__":
-    fileptr=open("WaterJug.in",'r')
-    outptr=open("WaterJug.out",'w')
+    fileptr=open("more_sample_io/WaterJug.in",'r')
+    outptr=open("more_sample_io/WaterJug.out",'w')
     N=int(fileptr.readline())
     for i in range(0,N):
         store=WaterJug(fileptr)
